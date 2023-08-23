@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <link rel="stylesheet" type="text/css" href="/static/styles/stylesheet.css" />
+
+  <head>
+    <title>Summary Report Generator</title>
+  </head>
+  <body>
+    <h1>Generate Summary Report</h1>
+    <ol>
+      <li>Select file from computer from "Browse...".</li>
+      <li>Select assessment type (please make sure it matches the file)</li>
+      <li>Click "Upload and Calculate" to process the file.</li>
+      <li>
+        Once the file is ready for download, click "Download Report" to receive
+        and download the processed report.
+      </li>
+    </ol>
+
+    <p>
+      If there is an error uploading the file or the downloaded file is blank,
+      please make sure the file matches the selected assessment type and try
+      again. Reselect the file and assessment type as neccessary, then click
+      "upload and calculate" again. Then download the report again.
+    </p>
+
+    <div class="flex-container">
+      <div id="upload-section">
+        <form id="uploadForm" enctype="multipart/form-data">
+          <input type="file" name="fileInput" id="fileInput" />
+        </form>
+
+        <div id="dropdown-menu" disabled>
+          <label for="assessment-types-selection">Assessment type:</label>
+          <select
+            name="assessment-types"
+            id="assessment-types"
+            onselect="groupSelected()"
+          >
+            <option value="" selected>Select an option...</option>
+            <option value="ELD1_CLS">ELD1 CLS</option>
+            <option value="ELD1_FLS">ELD1 FLS</option>
+            <option value="ELD1_LFC">ELD1 LFC</option>
+            <option value="ELD2_CLS">ELD2 CLS</option>
+            <option value="ELD2_FLS">ELD2 FLS</option>
+            <option value="ELD2_LFC">ELD2 LFC</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="uploadbutton">
+        <input
+          type="button"
+          value="Upload and Calculate"
+          onclick="processFile()"
+        />
+      </div>
+
+      <button id="downloadButton" onclick="downloadButtonFunction()" disabled>
+        Download Report
+      </button>
+    </div>
+
+    <script src="../static/main.js"></script>
+  </body>
+</html>
