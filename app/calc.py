@@ -189,7 +189,6 @@ def score_by_skill(assessment_type, avg_by_question):
         score = get_skill_average(qnum_dict[key], avg_by_question)
         scores_by_skill[key] = score
 
-    print(scores_by_skill)
     return scores_by_skill
 
 

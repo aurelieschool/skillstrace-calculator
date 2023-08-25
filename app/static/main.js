@@ -30,7 +30,8 @@ function processFile() {
 }
 
 function enableDownloadButton() {
-    document.getElementById("downloadButton").disabled = false;
+    document.getElementById("download-button").disabled = false;
+    document.getElementById("download-text").hidden = false;
 }
 
 
@@ -40,7 +41,6 @@ function checkFileStatus() {
         .then(handleFileStatusResponse);
 }
 
-checkFileStatus();
 
 // handle backend response FOR FILE DOWNLOAD
 function handleFileStatusResponse(response) {
@@ -65,3 +65,5 @@ function downloadButtonFunction() {
     // Optional: Remove the link from the DOM after the download is initiated
     document.body.removeChild(link);
 }
+
+checkFileStatus();

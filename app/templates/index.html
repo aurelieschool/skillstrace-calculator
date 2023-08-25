@@ -25,7 +25,7 @@
     </p>
 
     <div class="flex-container">
-      <div id="upload-section">
+      <div id="upload-section" class="flex-container">
         <form id="uploadForm" enctype="multipart/form-data">
           <input type="file" name="fileInput" id="fileInput" />
         </form>
@@ -48,17 +48,19 @@
         </div>
       </div>
 
-      <div id="uploadbutton">
-        <input
-          type="button"
-          value="Upload and Calculate"
-          onclick="processFile()"
-        />
-      </div>
+      <div class="flex-container" id="upload-and-download-button">
+        <div id="upload-button-div">
+          <button id="upload-button" onclick="processFile()"> Upload and Calculate </button>
+        </div>
 
-      <button id="downloadButton" onclick="downloadButtonFunction()" disabled>
-        Download Report
-      </button>
+        <div id "download-button-div">
+          <button id="download-button" 
+            onclick="downloadButtonFunction()" 
+            disabled> Download Report</button>
+          <p id="download-text" hidden> Download ready! </p>
+        </div>
+      </div>
+      
     </div>
 
     <script src="../static/main.js"></script>

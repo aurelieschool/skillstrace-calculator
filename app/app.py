@@ -18,6 +18,9 @@ app = Flask(__name__)
 
 file_status = {"ready": False, "data": None}
 
+# TODO: CLEAR CACHES WHEN THE PERSON RELOADS THE PAGE !!!
+# TODO: DON'T ENABLE DOWNLOAD BUTTON UNTIL IT'S ACTUALLY READY (NOT JUST FILE STATUS READY)
+
 
 @app.route("/")
 def index():
@@ -82,29 +85,26 @@ def download():
     if file_status["ready"]:
         df = pd.DataFrame(file_status["data"])
 
-        # Create a buffer to store the Excel file in memory
         buffer = io.BytesIO()
 
-        # Define a percentage style
         percent_style = NamedStyle(name="percent", number_format="0%")
 
-        # Write the dataframe to Excel
+        # write the df to Excel
         with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
             df.to_excel(writer, index=True, sheet_name="Sheet1")
             worksheet = writer.sheets["Sheet1"]
 
-            # Apply the percentage style to 'Value' column
+            # apply the percentage style to 'Value' column
             for row in worksheet.iter_rows(
                 min_row=2, min_col=2, max_col=2, max_row=worksheet.max_row
-            ):  # assuming Value is the second column and you have a header row
+            ):
                 for cell in row:
                     if isinstance(
                         cell.value, float
-                    ):  # assuming your percentages are floats like 0.75 for 75%
-                        # cell.value *= 100  # convert to percentage
+                    ):  # assuming percentages are floats like 0.75 for 75%
                         cell.style = percent_style
 
-            # Auto-size columns
+            # auto-size columns
             for column in worksheet.columns:
                 max_length = 0
                 column = [cell for cell in column]
@@ -119,7 +119,7 @@ def download():
                     column[0].column_letter
                 ].width = adjusted_width
 
-        # Go back to the start of the buffer
+        # back to the start of the buffer
         buffer.seek(0)
 
         return send_file(
