@@ -384,9 +384,9 @@ def report_from_file(filepath, assessment_type):
             overall_class_score = info
 
     # Add the overall class score row
-    data["Detailed Skill"].append("Class Score")
-    data["Connected Lesson"].append(None)
-    data["Class Score"].append(overall_class_score)
+    data["Detailed Skill"].insert(0, detailed_skill)
+    data["Connected Lesson"].insert(0, None)
+    data["Class Score"].insert(0, overall_class_score)
 
     df = pd.DataFrame(data)
 

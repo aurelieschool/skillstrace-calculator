@@ -98,10 +98,28 @@ def download():
         for cell in ws["C2:C" + str(ws.max_row)]:
             cell[0].style = "percent"
 
-        # Justify left the first column
+        # Justify left the first column && make it all bold
         for row in ws.iter_rows(min_col=1, max_col=1):
+            ws.row_dimensions[row[0].row].height = 30  # making the height big
             for cell in row:
                 cell.alignment = Alignment(horizontal="left")
+                cell.font = Font(bold=True)
+
+        for row in ws.iter_rows(min_col=2, max_col=3):
+            ws.row_dimensions[row[0].row].height = 30  # making the height big
+            for cell in row:
+                cell.alignment = Alignment(horizontal="center")
+
+        # make the font red if they did worse than 50%
+        for row in ws.iter_rows():
+            for cell in row:
+                try:
+                    value = float(cell.value)
+                    if value < 0.5:
+                        cell.font = Font(color="c23329")
+                except (TypeError, ValueError):
+                    # This will skip the cell if its content isn't a number (e.g., a string or None)
+                    pass
 
         # Color the "Score" header cell
         score_header = [
@@ -111,9 +129,9 @@ def download():
         ]  # Assuming the Score header is in cell B1
         for header in score_header:
             header.fill = PatternFill(
-                start_color="FFFF00", end_color="FFFF00", fill_type="solid"
+                start_color="BDBDBD", end_color="BDBDBD", fill_type="solid"
             )
-            header.font = Font(bold=True, size=14)
+            header.font = Font(bold=True, size=12)
 
         # Apply border to all columns
         thin_border = Border(
@@ -126,10 +144,20 @@ def download():
             for cell in row:
                 cell.border = thin_border
 
-        # make the class score (last row) bigger
-        last_row = ws.max_row
-        for cell in ws[last_row]:
-            cell.font = Font(size=20)
+        # make the class score (second row) bigger:
+        for cell in ws[2]:
+            cell.font = Font(bold=True, size=14, color="FFFFFF")
+            cell.fill = PatternFill(
+                start_color="25732d", end_color="25732d", fill_type="solid"
+            )
+
+        # make color for the rows that are beneath row 2
+        for row_index, row in enumerate(ws.iter_rows(), start=1):
+            if row_index > 2:
+                for cell in row:
+                    cell.fill = PatternFill(
+                        start_color="aedba2", end_color="aedba2", fill_type="solid"
+                    )
 
         # have automatic width
         for column in ws.columns:
