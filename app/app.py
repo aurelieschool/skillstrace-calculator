@@ -11,8 +11,8 @@ import tempfile
 import calc
 import pandas as pd
 import io
-import openpyxl
-from openpyxl.styles import NamedStyle
+from openpyxl import load_workbook
+from openpyxl.styles import NamedStyle, Font, Border, Side, PatternFill, Alignment
 
 app = Flask(__name__)
 
@@ -83,18 +83,76 @@ def check_file_status():
 @app.route("/download", methods=["GET"])
 def download():
     if file_status["ready"]:
-        df = pd.DataFrame(file_status["data"])
         buffer = io.BytesIO()
+        with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
+            file_status["data"].to_excel(writer, sheet_name="Sheet1", index=False)
 
+        # Load the workbook from the buffer
+        buffer.seek(0)
         percent_style = NamedStyle(name="percent", number_format="0%")
 
         # Save DataFrame to Excel directly into the buffer
-        df.to_excel(buffer, index=True, sheet_name="Sheet1", engine="openpyxl")
+        # Load the workbook and select the active worksheet
+        wb = load_workbook(buffer)
+        ws = wb.active
 
-        # If you want to apply styles like before, you'll still need to open the workbook with openpyxl
-        # and manipulate it, then save it back to the buffer. For simplicity, I've omitted this.
+        if not "percent" in wb.named_styles:
+            wb.add_named_style(percent_style)
+        for cell in ws["C2:C" + str(ws.max_row)]:
+            cell[0].style = "percent"
+
+        # Justify left the first column
+        for row in ws.iter_rows(min_col=1, max_col=1):
+            for cell in row:
+                cell.alignment = Alignment(horizontal="left")
+
+        # Color the "Score" header cell
+        score_header = [
+            ws["A1"],
+            ws["B1"],
+            ws["C1"],
+        ]  # Assuming the Score header is in cell B1
+        for header in score_header:
+            header.fill = PatternFill(
+                start_color="FFFF00", end_color="FFFF00", fill_type="solid"
+            )
+            header.font = Font(bold=True, size=14)
+
+        # Apply border to all columns
+        thin_border = Border(
+            left=Side(style="thin"),
+            right=Side(style="thin"),
+            top=Side(style="thin"),
+            bottom=Side(style="thin"),
+        )
+        for row in ws.iter_rows():
+            for cell in row:
+                cell.border = thin_border
+
+        # make the class score (last row) bigger
+        last_row = ws.max_row
+        for cell in ws[last_row]:
+            cell.font = Font(size=20)
+
+        # have automatic width
+        for column in ws.columns:
+            max_length = 0
+            column = [cell for cell in column]  # Convert generator object to list
+            for cell in column:
+                try:  # Necessary to avoid error on empty cells
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(cell.value)
+                except:
+                    pass
+            adjusted_width = max_length + 2  # Adding a little extra space
+            ws.column_dimensions[column[0].column_letter].width = adjusted_width
+
+        # Save the styled Excel file
+        wb.save("styled_filename.xlsx")
 
         # back to the start of the buffer
+        buffer.seek(0)
+        wb.save(buffer)
         buffer.seek(0)
 
         return send_file(

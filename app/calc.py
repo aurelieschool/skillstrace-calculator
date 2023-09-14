@@ -364,16 +364,42 @@ def report_from_file(filepath, assessment_type):
     by_skill_dict["\n"] = "\n"
     by_skill_dict["Class Score"] = overall
 
-    skillScores = pd.DataFrame(
-        list((by_skill_dict.values()["Questions"])),
-        index=list(by_skill_dict.keys()),
-        columns=["Score"],
-    )
+    if assessment_type == "ELD1_FLS" or assessment_type == "ELD2_FLS":
+        detailed_skill = "Foundational Literacy Skills"
+    elif assessment_type == "ELD1_CLS" or assessment_type == "ELD2_CLS":
+        detailed_skill = "Collaborative Listening and Speaking"
+    elif assessment_type == "ELD1_LFC" or assessment_type == "ELD2_LFC":
+        detailed_skill = "Language Function and Construction"
+    else:
+        detailed_skill = "detailed skill unknown"
 
-    return skillScores
+    data = {"Detailed Skill": [], "Connected Lesson": [], "Class Score": []}
+
+    for skill, info in by_skill_dict.items():
+        # We will filter out the 'Class Score' key because it doesn't contain lesson info
+        if isinstance(info, dict) and "Lesson" in info:
+            data["Detailed Skill"].append(skill)
+            data["Connected Lesson"].append(info["Lesson"])
+            data["Class Score"].append(info["Score"])
+        else:
+            overall_class_score = info
+
+    # Add the overall class score row
+    data["Detailed Skill"].append("Class Score")
+    data["Connected Lesson"].append(None)
+    data["Class Score"].append(overall_class_score)
+
+    df = pd.DataFrame(data)
+
+    return df
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
+def main():
     filepath = "../testingFiles/CLS1.csv"
     assessment_type = "ELD1_CLS"
     summary = report_from_file(filepath, assessment_type)
+    return summary
+
+
+main()
