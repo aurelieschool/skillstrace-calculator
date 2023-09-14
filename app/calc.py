@@ -3,7 +3,6 @@ import csv
 import numpy as np
 import sys
 
-# TODO: MAKE THE PSEUDOMAIN FUNCTION ONE TAHT RETURNS THE EXCEL SHEET
 
 # there are some lesson/skill mappings that have been commented out because
 # they're grouped in some parts of the template spreadsheet but not in others
@@ -395,11 +394,11 @@ def report_from_file(filepath, assessment_type):
 
 
 # if __name__ == "__main__":
-def main():
-    filepath = "../testingFiles/CLS1.csv"
-    assessment_type = "ELD1_CLS"
-    summary = report_from_file(filepath, assessment_type)
-    return summary
+# def main():
+#     filepath = "../testingFiles/CLS1.csv"
+#     assessment_type = "ELD1_CLS"
+#     summary = report_from_file(filepath, assessment_type)
+#     return summary
 
 
-main()
+# main()

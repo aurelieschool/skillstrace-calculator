@@ -18,9 +18,6 @@ app = Flask(__name__)
 
 file_status = {"ready": False, "data": None}
 
-# TODO: CLEAR CACHES WHEN THE PERSON RELOADS THE PAGE !!!
-# TODO: DON'T ENABLE DOWNLOAD BUTTON UNTIL IT'S ACTUALLY READY (NOT JUST FILE STATUS READY)
-
 
 @app.route("/")
 def index():
