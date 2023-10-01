@@ -77,9 +77,19 @@ def check_file_status():
         return jsonify({"message": "not done"})
 
 
-@app.route("/download", methods=["GET"])
-def download():
-    if file_status["ready"]:
+@app.route("/download/<assessment_type>", methods=["GET"])
+def download(assessment_type):
+    if assessment_type == "ELD1_FLS" or assessment_type == "ELD2_FLS":
+        header_color = "234682"
+        main_color = "8bb0f0"
+    elif assessment_type == "ELD1_CLS" or assessment_type == "ELD2_CLS":
+        header_color = "25732d"
+        main_color = "b4dbb8"
+    elif assessment_type == "ELD1_LFC" or assessment_type == "ELD2_LFC":
+        header_color = "ba2d90"
+        main_color = "e8aed7"
+
+    if assessment_type and file_status["ready"]:
         buffer = io.BytesIO()
         with pd.ExcelWriter(buffer, engine="openpyxl") as writer:
             file_status["data"].to_excel(writer, sheet_name="Sheet1", index=False)
@@ -148,7 +158,7 @@ def download():
         for cell in ws[2]:
             cell.font = Font(bold=True, size=14, color="FFFFFF")
             cell.fill = PatternFill(
-                start_color="25732d", end_color="25732d", fill_type="solid"
+                start_color=header_color, end_color=header_color, fill_type="solid"
             )
 
         # make color for the rows that are beneath row 2
@@ -156,7 +166,7 @@ def download():
             if row_index > 2:
                 for cell in row:
                     cell.fill = PatternFill(
-                        start_color="aedba2", end_color="aedba2", fill_type="solid"
+                        start_color=main_color, end_color=main_color, fill_type="solid"
                     )
 
         # have automatic width
@@ -184,7 +194,7 @@ def download():
             buffer,
             mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             as_attachment=True,
-            download_name="results.xlsx",
+            download_name=f"{assessment_type}_summary.xlsx",
         )
     else:
         return "No file ready for download"

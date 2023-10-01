@@ -53,17 +53,22 @@ function handleFileStatusResponse(response) {
 
 // FIX THIS. OUTPUT.XLSX SHOULD NOT EXIST...
 function downloadButtonFunction() {
-    var endpoint = "/download";
+    const assessmentType = document.getElementById("assessment-types");
 
-    var link = document.createElement("a");
-    link.href = endpoint;
-    link.download = "output.xlsx";
-    link.style.display = "none"; // Hide the link element
-    document.body.appendChild(link); // Add the link to the DOM
-    link.click(); // Simulate a click to trigger the download
-
-    // Optional: Remove the link from the DOM after the download is initiated
-    document.body.removeChild(link);
+    if (assessmentType && assessmentType.value) {
+        var endpoint = `/download/${assessmentType.value}`;
+    
+        var link = document.createElement("a");
+        link.href = endpoint;
+        link.download = "output.xlsx";
+        link.style.display = "none"; // Hide the link element
+        document.body.appendChild(link); // Add the link to the DOM
+        link.click(); // Simulate a click to trigger the download
+    
+        // Optional: Remove the link from the DOM after the download is initiated
+        document.body.removeChild(link);
+    }
+    
 }
 
 checkFileStatus();
